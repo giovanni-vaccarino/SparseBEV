@@ -50,6 +50,8 @@ python timing.py --config configs/r50_nuimg_704x256.py --weights checkpoints/r50
 
 ## Visualization
 
+### Visualize Bounding Box on the image
+
 Convert the result.json obtained from the inference to result.pkl:
 
 ```
@@ -61,9 +63,8 @@ Convert the result.pkl to bbox:
 python ./visualization/generateImagesBB.py
 ```
 
-
-Visualize the sampling points (like Fig. 6 in the paper):
-
+### Visualize Bounding Box on the point cloud
+Put in ./submission/pts_bbox/ the file info.pkl containing the intrisic of the camera and result.pkl containing the coordinates of the bbox
 ```
-python viz_sample_points.py --config configs/r50_nuimg_704x256.py --weights checkpoints/r50_nuimg_704x256.pth
+python ./visualization/visualizeAllPointCloud.py
 ```
