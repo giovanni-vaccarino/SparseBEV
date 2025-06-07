@@ -2,7 +2,7 @@ import os
 import pickle
 import numpy as np
 from scipy.spatial.transform import Rotation as R
-from config import ORIGINAL_SIZE, TARGET_SIZE, CAM_INTRINSIC_UNSCALED, CAM_EXTRINSICS, CAM_BACK_TRANSLATIONS, DEFAULT_INV_ROTATION
+from .config import ORIGINAL_SIZE, TARGET_SIZE, CAM_INTRINSIC_UNSCALED, CAM_EXTRINSICS, CAM_BACK_TRANSLATIONS, DEFAULT_INV_ROTATION
 
 def scale_intrinsic(K, original_size, target_size):
     """
