@@ -139,5 +139,5 @@ It can be run like this:
 
 You can run it with:
 ```bash
-#TODO add
+python -m torch.distributed.run --nproc_per_node=1 fine_tuning.py --config configs/r50_nuimg_704x256.p
 ```
