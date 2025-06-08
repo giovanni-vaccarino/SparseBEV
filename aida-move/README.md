@@ -1,8 +1,14 @@
+# SparseBEV on nuScenes & custom datasets
+
+The purpose of this document is to provide a guide on how to run any necessary experiments, from inference to fine-tuning, to visualization, with the SparseBEV model. We provide instructions for both nuScenes and custom dataset, referencing often to the original documentation for the nuScenes-related part.
+
 ## Setup
 
-We have provided a .yml support file to quickly setup the virtual environment. It can be found in the root directory as `sparsebev.yml`.
+The given documentation provided instructions for the setup of the environment. However we found some inconsistencies, often due to the missing support and modernization of the libraries. 
 
-To create a new environment that contains the correct dependencies with miniconda:
+To have a faster experience we have provided a .yml config file to quickly setup the virtual environment. It can be found in the root directory as `sparsebev.yml`.
+
+To create a new environment that contains the correct dependencies with miniconda you can run:
 
 ```bash
 conda env create -f sparsebev.yml
@@ -54,12 +60,18 @@ You can run it with:
 python resizeImages.py
 ```
 
-
 ### Creation of the pkl
 
 The script we used to generate the .pkl can be found under `generatePkl/genTestPkl.py`.
 
-The scripts will read
+The scripts will read information from the `data/` directory - so make sure to have filled the folder - and generate the related infos. It reads from config.py the intrinsics and extrinsics of the camera. In case you are working with your own camera you can edit them in `generatePkl/config.py`.
+
+You can run it with:
+```bash
+python genTestPkl.py
+```
+
+It will produce a .pkl file in the same folder.
 
 ### Perform the inference
 
@@ -70,78 +82,62 @@ export CUDA_VISIBLE_DEVICES=0
 python inference.py --config configs/r50_nuimg_704x256.py --weights checkpoints/r50_nuimg_704x256.pth
 ```
 
+The results are going to be saved in a `results.json` folder, in the nuScenes format.
+
 > *Note:* as for the inference on nuScenes, it is important to have created a directory in the root folder named `checkpoints`, and populate it with the .pth file, that is downloadble via the link provided in the original `README.md`.
 
+## Visualizing the results
 
+### nuScenes
 
+For nuScenes you can follow the instructions provided in the original `README.MD`:
 
-## Training
-
-Download pretrained weights and put it in directory `pretrain/`:
-
-```
-pretrain
-├── cascade_mask_rcnn_r101_fpn_1x_nuim_20201024_134804-45215b1e.pth
-├── cascade_mask_rcnn_r50_fpn_coco-20e_20e_nuim_20201009_124951-40963960.pth
-```
-
-Train SparseBEV with 8 GPUs:
-
-```
-torchrun --nproc_per_node 8 train.py --config configs/r50_nuimg_704x256.py
-```
-
-Train SparseBEV with 4 GPUs (i.e the last four GPUs):
-
-```
-export CUDA_VISIBLE_DEVICES=4,5,6,7
-torchrun --nproc_per_node 4 train.py --config configs/r50_nuimg_704x256.py
-```
-
-The batch size for each GPU will be scaled automatically. So there is no need to modify the `batch_size` in config files.
-
-## Evaluation
-
-Single-GPU evaluation:
-
-```
-export CUDA_VISIBLE_DEVICES=0
-python inference.py --config configs/r50_nuimg_704x256.py --weights checkpoints/r50_nuimg_704x256.pth
-```
-
-Multi-GPU evaluation:
-
-```
-export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
-torchrun --nproc_per_node 8 inference.py --config configs/r50_nuimg_704x256.py --weights checkpoints/r50_nuimg_704x256.pth
-```
-
-## Timing
-
-FPS is measured with a single GPU:
-
-```
-export CUDA_VISIBLE_DEVICES=0
-python timing.py --config configs/r50_nuimg_704x256.py --weights checkpoints/r50_nuimg_704x256.pth
-```
-
-## Visualization
-
-### Visualize Bounding Box on the image
-
-Convert the result.json obtained from the inference to result.pkl:
-
-```
+```bash
 python viz_bbox_predictions.py --config configs/r50_nuimg_704x256.py --weights checkpoints/r50_nuimg_704x256.pth
 ```
 
-Convert the result.pkl to bbox:
+### Custom Dataset
+
+In this section instead we show how to visualize the results on both the image view or a 3D view.
+
+#### Visualize Bounding Box on the image
+
+For our custom dataset we have to first convert the bboxes in the MMDDET format.
+
+You can do that by running:
+
+```bash
+python convert_results_to_mmdet.py --config configs/r50_nuimg_704x256.py --weights checkpoints/r50_nuimg_704x256.pth
 ```
+
+This script will return in output a `results.pkl`, that will now be used to the final display.
+
+Now with this last script we're going to generate the output images with the bboxes
+```bash
 python ./visualization/generateImagesBB.py
 ```
 
-### Visualize Bounding Box on the point cloud
-Put in ./submission/pts_bbox/ the file info.pkl containing the intrisic of the camera and result.pkl containing the coordinates of the bbox
-```
+#### Visualize Bounding Box on the point cloud
+
+Put in `./submission/pts_bbox/` the file `info.pkl` containing the intrisic of the camera and `results.pkl` containing the coordinates of the bbox
+```bash
 python ./visualization/visualizeAllPointCloud.py
+```
+
+## Fine-Tuning
+
+Firstly, as for the inference, we have to create the .pkl file. The same procedures that have been discussed for the generation of the test one apply. You can then generate the file using `generatePkl/genTrainPkl.py`.
+
+You can run it with:
+```bash
+python genTrainPkl.py
+```
+
+At this point you are ready to perform the effective fine-tuning. We're going to exploit the `fine_tuning.py` script.
+
+It can be run like this:
+
+You can run it with:
+```bash
+#TODO add
 ```
