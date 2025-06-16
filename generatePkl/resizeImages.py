@@ -2,7 +2,7 @@ import os
 from PIL import Image
 
 # Set the root folder where your camera folders are
-data_root = 'data/aida_mdp_500'  # change if your path is different
+data_root = '../data/aida_mdp_500'  # change if your path is different
 target_size = (1600, 900)  # (width, height)
 
 # List of camera folders
