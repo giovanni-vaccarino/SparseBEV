@@ -124,6 +124,21 @@ Put in `./submission/pts_bbox/` the file `info.pkl` containing the intrisic of t
 python ./visualization/visualizeAllPointCloud.py
 ```
 
+## Metrics
+
+### Generate GT json
+To visualize the metrics first of all convert the ground truth to the same format as the result.json of the inference
+```bash
+python ./evaluation/generateGT.py
+```
+
+### Compute metrics
+The following script takes in input the result.json of the inference and the previous generate gt file.
+```bash
+python ./evaluation/eval.py
+```
+
+
 ## Fine-Tuning
 
 Firstly, as for the inference, we have to create the .pkl file. The same procedures that have been discussed for the generation of the test one apply. You can then generate the file using `generatePkl/genTrainPkl.py`.
